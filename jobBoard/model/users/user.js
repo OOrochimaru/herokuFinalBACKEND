@@ -14,7 +14,7 @@ var UserSchema = new Schema({
     email: {type: String, required:[true, "can't be blank"], unique:true, match:[/\S+@\S+\.\S+/]},
     password: {type: String, required: true},
     number:{type:Number, required:true},
-    currentLocation: [{type: String}],
+    currentLocation: {type: String},
     companyName: {type: String, },
         //required: function(){return this.role === 'employer'}},
     companyDescription: {type: String},
@@ -110,6 +110,9 @@ UserSchema.methods.generatJWT = function(){
 UserSchema.methods.toAuthJSON =function(){
     return {
         username: this.username,
+        userid: this._id,
+        userlocation: this.currentLocation,
+        userCompany: this.companyName,
         token: this.generatJWT(),
     }
 }

@@ -6,23 +6,21 @@ var Schema = mongoose.Schema;
 
 var JobSchema = new Schema({
     // slug:{type:String, lowercase:true, unique:true},
-    jobTitle:{type: String, required:true},
-    location: [{type: String}],
-    jobDescription:{
-        description: {type: String},
-       jobType:{type:String, },
-        qualification:{type:String},
-        experience:{type:String},
-        pulishedDate: {type: Date, default:Date.now},
-        deadline: {type: Date},
-        jobLocation: {type: String},
+    jobTitle: { type: String, required: true },
+    location: [{ type: String }],
+    jobDescription: {
+        description: { type: String },
+        jobType: { type: String, },
+        experience: { type: String },
+        pulishedDate: { type: Date, default: Date.now },
+        deadline: { type: Date },
     },
-    isActive: {type: Boolean, default:function(){return (this.deadline - new Date()) > 0}},
-    jobApplicants: [{type: Schema.Types.ObjectId, ref:'user'}],
-    jobPublisher:{type: Schema.Types.ObjectId, ref: 'user'},
-    isFeatured: {type: Boolean, default:false},
-    views: {type: Number}
-}, {timestamps:true});
+    isActive: { type: Boolean, default: function () { return (this.deadline - new Date()) > 0 } },
+    jobApplicants: [{ type: Schema.Types.ObjectId, ref: 'user' }],
+    jobPublisher: { type: Schema.Types.ObjectId, ref: 'user' },
+    isFeatured: { type: Boolean, default: false },
+    views: { type: Number }
+}, { timestamps: true });
 
 //JobSchema.plugin(uniqueValidator, {message:'is already taken'});
 JobSchema.plugin(mongoosePaginate);
@@ -36,17 +34,17 @@ JobSchema.plugin(mongoosePaginate);
 // JobSchema.methods.slugify = function(title){
 //     this.slug = slug(this.title)+'-' + (Math.random()*Math(36, 7)|0).toString(36);
 // };
-JobSchema.methods.toJSONFor = function(){
+JobSchema.methods.toJSONFor = function () {
     return {
         //slug: this.slug,
         title: this.jobTitle,
         jobDescription: this.jobDescription,
         isActive: this.isActive,
-        jobPublisher : this.jobPublisher,
+        jobPublisher: this.jobPublisher,
         isFeatured: this.isFeatured,
     }
 }
 
 
 
-module.exports = mongoose.model('job',JobSchema);
+module.exports = mongoose.model('job', JobSchema);

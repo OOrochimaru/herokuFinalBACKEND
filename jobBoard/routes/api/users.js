@@ -24,7 +24,7 @@ router.get('/:id/browseresumes', auth.required, require('../../controllers/userC
 router.post('/:id/searchresumes', auth.required, require('../../controllers/userController').searchResumes);
 
 //search jobs
-router.get('/searchjobs', require('../../controllers/userController').searchjobs);
+router.post('/searchjobs', require('../../controllers/userController').searchjobs);
 
 //login for both 
 router.post('/login', require('../../controllers/userController').login);
@@ -39,11 +39,11 @@ router.post('/:id/register/education', auth.required, require('../../controllers
 //user home page
 router.get('/:id/home', auth.required, require('../../controllers/userController').userHome);
 
-//route to adding job
-router.get('/:id/addJob', auth.required, require('../../controllers/userController').addJobForm);
+// //route to adding job
+// router.get('/:id/addJob', auth.required, require('../../controllers/userController').addJobForm);
 
 //adding jobs
-router.put('/:id/addJob', auth.required, require('../../controllers/userController').addJob);
+router.post('/:id/addJob', auth.required, require('../../controllers/userController').addJob);
 
 //editing job
 router.get('/:id/editjob', auth.required, require('../../controllers/userController').viewEditJob);
