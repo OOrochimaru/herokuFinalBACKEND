@@ -37,8 +37,10 @@ JobSchema.plugin(mongoosePaginate);
 JobSchema.methods.toJSONFor = function () {
     return {
         //slug: this.slug,
-        title: this.jobTitle,
+        jobId: this._id,
+        jobTitle: this.jobTitle,
         jobDescription: this.jobDescription,
+        jobLocation: this.location,
         isActive: this.isActive,
         jobPublisher: this.jobPublisher,
         isFeatured: this.isFeatured,

@@ -120,6 +120,11 @@ UserSchema.methods.toAuthJSON =function(){
 UserSchema.methods.toProfileJSONFor = function(user){
     return {
         username: this.username,
+        userid: this._id,
+        userlocation: this.currentLocation,
+        company: this.companyName,
+        number: this.number,
+        email: this.email,
         appliedJobs: this.appliedJobs,
         postedJobs: this.postedJobs,
     }

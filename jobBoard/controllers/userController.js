@@ -18,6 +18,17 @@ module.exports.user = function (req, res, next) {
         })
     }
 }
+module.exports.getUser = function(req, res, next){
+    console.log(req.params.id);
+    if (req.params.id !== null) {
+        UserModel.findById(req.params.id).then(function(user){
+            if(user){
+                console.log("******getuser")
+                return res.json({user: user.toProfileJSONFor()});
+            }
+        })
+    }
+}
 module.exports.homepage = function (req, res, next) {
     JobModel.find({ isFeatured: true }).sort({ 'createdAt': -1 }).limit(4).then(function (jobs) {
         return res.json({
@@ -82,6 +93,29 @@ module.exports.browseJobs = function (req, res, next) {
     //     return res.json({jobs: jobs});
     // });
 };
+
+module.exports.getUserJobs = function(req, res, next){
+    console.log(req.user.id);
+    JobModel.find({jobPublisher: req.user.id}).then(function(jobs){
+        if (jobs) {
+            console.log("jobs found"+jobs)
+            return res.json({jobs: jobs.map(function(job){
+                    return job.toJSONFor();
+            })})
+        }else{
+            return res.sendStatus(227);
+        }
+    })
+    
+}
+
+module.exports.getJobPreview = function(req, res, next){
+    console.log(req.params.id);
+    JobModel.findById(req.params.jobId).then(function(job){
+        console.log(job);
+        return res.json({job: job.toJSONFor() });
+    })
+}
 
 
 module.exports.signup = function (req, res, next) {

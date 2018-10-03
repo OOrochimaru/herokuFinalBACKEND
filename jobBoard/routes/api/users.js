@@ -10,6 +10,15 @@ router.param('id', require('../../controllers/userController').loadUser);
 //home page along with search and featured jobs
 router.get('/', require('../../controllers/userController').homepage);
 
+//get particular user for job preview detailing
+router.get('/:id/getUser', require('../../controllers/userController').getUser);
+
+//get particular user's jobslist
+router.get('/:id/getUserJobs', auth.required, require('../../controllers/userController').getUserJobs);
+
+//getting job preveiw for particular job
+router.get('/:jobId/getJobPreview', require('../../controllers/userController').getJobPreview);
+
 //hoem page browse jobs without forms
 router.get('/browsejobs', require('../../controllers/userController').browseJobs);
 
