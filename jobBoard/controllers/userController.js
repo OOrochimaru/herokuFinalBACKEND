@@ -279,7 +279,6 @@ module.exports.addJobForm = function (req, res, next) {
 
 module.exports.addJob = function (req, res, next) {
     request =  req.body.job
-    console.log(req.user);
     if (req.user.role === 'employer') {
         
         var job = new JobModel();
