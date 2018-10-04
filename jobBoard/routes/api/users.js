@@ -7,6 +7,7 @@ router.get('/user', auth.required, require('../../controllers/userController').u
 //preloading user object on routes to the :id
 router.param('id', require('../../controllers/userController').loadUser);
 
+router.post('/checkuser', require('../../controllers/userController').checkuser);
 //home page along with search and featured jobs
 router.get('/', require('../../controllers/userController').homepage);
 
@@ -39,7 +40,7 @@ router.post('/searchjobs', require('../../controllers/userController').searchjob
 router.post('/login', require('../../controllers/userController').login);
 
 //signing up
-router.post('/signup' ,require('../../controllers/userController').signup);
+router.post('/register', require('../../controllers/userController').register);
 
 //adding jobseeker education
 router.post('/:id/register/education', auth.required, require('../../controllers/userController')

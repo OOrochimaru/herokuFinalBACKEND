@@ -43,15 +43,15 @@ module.exports.homepage = function (req, res, next) {
 module.exports.checkuser = function (req, res, next) {
     console.log(req.body.user);
     if (req.body.user != null) {
-        console.log(req.user);
-        UserModel.findOne({ email: req.body.user }).then(function (error, user) {
-            if (error) {
-
+        console.log(req.body.user);
+        UserModel.findOne({ email: req.body.user }).then(function (user) {
+            console.log(user)
+            if (!user) {
+                console.log("user not found")
                 return res.sendStatus(404);
             }
-            if (user) {
-                return res.json({ user: user });
-            }
+            return res.json({ user: user });
+            
         })
     }
 }
@@ -118,15 +118,18 @@ module.exports.getJobPreview = function(req, res, next){
 }
 
 
-module.exports.signup = function (req, res, next) {
+module.exports.register = function (req, res, next) {
     var user = new UserModel();
+    console.log("register reached")
     // console.log("hello");
 
-    user.username = req.body.user.username;
+    user.username = req.body.user.fullname;
     user.email = req.body.user.email;
     user.password = req.body.user.password;
     user.number = req.body.user.number;
-    user.currentLocation = req.body.user.currentLocation;
+    // user.currentLocation = req.body.user.currentLocation;
+    user.role = req.body.user.userType;
+    user.gender = req.body.user.gender;
 
     user.save().then(function () {
         // console.log("*******")

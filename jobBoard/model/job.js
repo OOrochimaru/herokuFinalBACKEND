@@ -12,7 +12,7 @@ var JobSchema = new Schema({
         description: { type: String },
         jobType: { type: String, },
         experience: { type: String },
-        pulishedDate: { type: Date, default: Date.now },
+        publishedDate: { type: Date, default: Date.now },
         deadline: { type: Date },
     },
     isActive: { type: Boolean, default: function () { return (this.deadline - new Date()) > 0 } },
