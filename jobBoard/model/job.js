@@ -7,12 +7,12 @@ var Schema = mongoose.Schema;
 var JobSchema = new Schema({
     // slug:{type:String, lowercase:true, unique:true},
     jobTitle: { type: String, required: true },
-    location: [{ type: String }],
+    location: { type: String },
     jobDescription: {
         description: { type: String },
         jobType: { type: String, },
         experience: { type: String },
-        publishedDate: { type: Date, default: Date.now },
+        publishedDated: { type: Date, default: Date.now },
         deadline: { type: Date },
     },
     isActive: { type: Boolean, default: function () { return (this.deadline - new Date()) > 0 } },

@@ -127,7 +127,7 @@ module.exports.register = function (req, res, next) {
     user.email = req.body.user.email;
     user.password = req.body.user.password;
     user.number = req.body.user.number;
-    // user.currentLocation = req.body.user.currentLocation;
+    user.currentLocation = req.body.user.currentLocation;
     user.role = req.body.user.userType;
     user.gender = req.body.user.gender;
 
@@ -212,16 +212,18 @@ module.exports.companyDetails = function (req, res, next) {
 module.exports.searchjobs = function (req, res, next) {
     var search = {};
     // if (req.query.name != null) {
-    search.jobTitle = { "$regex": req.query.title };
+    search.jobTitle = { "$regex": req.body.query.jobTitle, "$options":"i" };
     // }
     // if (req.query.location != null) {
-    search.location = { '$regex': req.query.location };
+    search.location = { '$regex': req.body.query.location,  "$options":"i" };
     // }
+    console.log(search)
     return Promise.all([
         JobModel.find(search).exec()
     ]).then(function (results) {
-        return res.json({ jobs: results });
-    });
+        console.log(results);
+        return res.json({ jobs: results    });
+});
 }
 
 //show all resumes

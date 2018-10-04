@@ -13,6 +13,7 @@ var UserSchema = new Schema({
                     lowercase: true, match:[/^[a-zA-Z0-9]+$/, 'is invalid'] },
     email: {type: String, required:[true, "can't be blank"], unique:true, match:[/\S+@\S+\.\S+/]},
     password: {type: String, required: true},
+    user: {type: String},
     number:{type:Number, required:true},
     currentLocation: {type: String},
     companyName: {type: String, },
@@ -114,6 +115,7 @@ UserSchema.methods.toAuthJSON =function(){
         userlocation: this.currentLocation,
         userCompany: this.companyName,
         token: this.generatJWT(),
+        role: this.role,
     }
 }
 
@@ -127,6 +129,7 @@ UserSchema.methods.toProfileJSONFor = function(user){
         email: this.email,
         appliedJobs: this.appliedJobs,
         postedJobs: this.postedJobs,
+        role: this.role,
     }
 }
 
