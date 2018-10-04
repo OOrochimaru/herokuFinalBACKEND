@@ -5,17 +5,25 @@ var auth = require('../auth');
 router.get('/user', auth.required, require('../../controllers/userController').user);
 
 //preloading user object on routes to the :id
-router.param('id', require('../../controllers/userController').loadUser);
+router.param('id', auth.required, require('../../controllers/userController').loadUser);
 
+//checking wheather there is existing email or fullname
 router.post('/checkuser', require('../../controllers/userController').checkuser);
+
+
 //home page along with search and featured jobs
 router.get('/', require('../../controllers/userController').homepage);
 
 //get particular user for job preview detailing
 router.get('/:id/getUser', require('../../controllers/userController').getUser);
 
+//getting user detail for billing and details 
+router.get('/:username/getUserDetails', require('../../controllers/userController').getUserDetails);
+
+
+
 //get particular user's jobslist
-router.get('/:id/getUserJobs', auth.required, require('../../controllers/userController').getUserJobs);
+router.get('/:id/getUserJobs', auth.required,require('../../controllers/userController').getUserJobs);
 
 //getting job preveiw for particular job
 router.get('/:jobId/getJobPreview', require('../../controllers/userController').getJobPreview);

@@ -113,9 +113,13 @@ UserSchema.methods.toAuthJSON =function(){
         username: this.username,
         userid: this._id,
         userlocation: this.currentLocation,
-        userCompany: this.companyName,
-        token: this.generatJWT(),
+        company: this.companyName,
+        number: this.number,
+        email: this.email,
+        appliedJobs: this.appliedJobs,
+        postedJobs: this.postedJobs,
         role: this.role,
+        token: this.generatJWT(),
     }
 }
 

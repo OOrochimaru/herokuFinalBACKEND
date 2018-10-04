@@ -4,7 +4,7 @@ var JobModel = require('../model/job');
 var async = require('async');
 var mongoosePaginate = require('mongoose-paginate');
 
-
+//checking logged in token
 module.exports.user = function (req, res, next) {
     if (req.payload.id !== null) {
         UserModel.findById({ _id: req.payload.id }).then(function (user) {
@@ -18,8 +18,10 @@ module.exports.user = function (req, res, next) {
         })
     }
 }
+
+//for job preview 
 module.exports.getUser = function(req, res, next){
-    console.log(req.params.id);
+    // console.log(req.params.id);
     if (req.params.id !== null) {
         UserModel.findById(req.params.id).then(function(user){
             if(user){
@@ -29,6 +31,23 @@ module.exports.getUser = function(req, res, next){
         })
     }
 }
+
+//user detail and billing
+module.exports.getUserDetails = function(req, res, next){
+    console.log("sdfjks"+req.params.username);
+    if (req.params.username !== null) {
+        UserModel.findOne({username : req.params.username}).then(function(user){
+            if(user){
+                console.log("******getuser")
+                console.log(user);
+                return res.json({user: user.toProfileJSONFor()});
+            }
+        })
+    }
+}
+
+
+
 module.exports.homepage = function (req, res, next) {
     JobModel.find({ isFeatured: true }).sort({ 'createdAt': -1 }).limit(4).then(function (jobs) {
         return res.json({
@@ -40,6 +59,7 @@ module.exports.homepage = function (req, res, next) {
     // return res.json({job: "job"});
 };
 
+//checking existing username or email
 module.exports.checkuser = function (req, res, next) {
     console.log(req.body.user);
     if (req.body.user != null) {
