@@ -63,7 +63,8 @@ module.exports.getJobPreview = function (req, res, next) {
 //jobs of particular user
 module.exports.getUserJobs = function (req, res, next) {
     console.log(req.user.id);
-    JobModel.find({ jobPublisher: req.user.id }).then(function (jobs) {
+    JobModel.find({ jobPublisher: req.user.id })
+    .populate({'path':'jobPublisher'}).then(function(jobs) {
         if (jobs) {
             console.log("jobs found" + jobs)
             return res.json({
