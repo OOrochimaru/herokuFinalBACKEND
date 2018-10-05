@@ -5,7 +5,7 @@ var auth = require('../auth');
 router.get('/user', auth.required, require('../../controllers/userController').user);
 
 //preloading user object on routes to the :id
-router.param('id', auth.required, require('../../controllers/userController').loadUser);
+router.param('id', require('../../controllers/userController').loadUser);
 
 //checking wheather there is existing email or fullname
 router.post('/checkuser', require('../../controllers/userController').checkuser);
@@ -20,7 +20,7 @@ router.get('/:id/getUser', require('../../controllers/userController').getUser);
 //getting user detail for billing and details 
 router.get('/:username/getUserDetails', require('../../controllers/userController').getUserDetails);
 
-
+router.get('/:jobId', auth.required, require('../../controllers/userController').applyForJob);
 
 //get particular user's jobslist
 router.get('/:id/getUserJobs', auth.required,require('../../controllers/userController').getUserJobs);

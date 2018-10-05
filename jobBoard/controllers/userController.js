@@ -6,7 +6,7 @@ var mongoosePaginate = require('mongoose-paginate');
 
 //checking logged in token
 module.exports.user = function (req, res, next) {
-    console.log("user logged in checked"+req.payload.id);
+    console.log("user logged in checked" + req.payload.id);
     if (req.payload.id !== null) {
         UserModel.findById({ _id: req.payload.id }).then(function (user) {
             // console.log(user);
@@ -21,27 +21,27 @@ module.exports.user = function (req, res, next) {
 }
 
 //for job preview 
-module.exports.getUser = function(req, res, next){
+module.exports.getUser = function (req, res, next) {
     // console.log(req.params.id);
     if (req.params.id !== null) {
-        UserModel.findById(req.params.id).then(function(user){
-            if(user){
+        UserModel.findById(req.params.id).then(function (user) {
+            if (user) {
                 console.log("******getuser")
-                return res.json({user: user.toProfileJSONFor()});
+                return res.json({ user: user.toProfileJSONFor() });
             }
         })
     }
 }
 
 //user detail and billing
-module.exports.getUserDetails = function(req, res, next){
-    console.log("sdfjks"+req.params.username);
+module.exports.getUserDetails = function (req, res, next) {
+    console.log("sdfjks" + req.params.username);
     if (req.params.username !== null) {
-        UserModel.findOne({username : req.params.username}).then(function(user){
-            if(user){
+        UserModel.findOne({ username: req.params.username }).then(function (user) {
+            if (user) {
                 console.log("******getuser")
                 console.log(user);
-                return res.json({user: user.toProfileJSONFor()});
+                return res.json({ user: user.toProfileJSONFor() });
             }
         })
     }
@@ -50,11 +50,11 @@ module.exports.getUserDetails = function(req, res, next){
 
 
 module.exports.homepage = function (req, res, next) {
-    JobModel.find({ isFeatured: true }).populate({'path':'jobPublisher'}).sort({ 'createdAt': -1 }).limit(4).then(function (jobs) {
+    JobModel.find({ isFeatured: true }).populate({ 'path': 'jobPublisher' }).sort({ 'createdAt': -1 }).limit(4).then(function (jobs) {
         console.log(jobs)
         return res.json({
             jobs: jobs.map(function (job) {
-                
+
                 return job.toJSONFor();
             })
         });
@@ -74,22 +74,50 @@ module.exports.checkuser = function (req, res, next) {
                 return res.sendStatus(404);
             }
             return res.json({ user: user });
-            
+
         })
     }
 }
 
-module.exports.applyForJob = function(req, res, next){
-    
+module.exports.applyForJob = function (req, res, next) {
+
     console.log(req.params.jobId);
-    JobModel.findById(req.params.jobId).populate({'path':'jobPublisher'})
-    .then(function(job){
-        this.job.jobPublisher.push(req.payload.id);
-        return job.toJSONFor();
-    })
-    // console.log(req.payload.id);
-    return res.json({sdf: "hello"})
+    JobModel.findById(req.params.jobId).populate({ 'path': 'jobPublisher' })
+        .then(function (job) {
+            UserModel.findById(req.payload.id).then(function (user) {
+                job.jobApplicants.push(user);
+                job.save();
+                user.appliedJobs.push(job);
+                user.save();
+                return res.json({ job: job.toJSONFor() })
+            })
+        })
 }
+
+            // console.log(user);
+            // console.log(job.jobApplicants.length+"dsfsdfdfdfdfdfdfdfd");
+            // job.jobApplicants.forEach(applicants => {
+            //     console.log(applicants+"sdjkfskd");
+            //     applicants.findById().then(function(user){
+            //         if (!user) {
+            //             console.log("user doesn't exist");
+            //         }else{
+            //             console.log("user do exist");
+            //         }
+            //     })
+            // })
+            // job.jobApplicants.push(user);
+            // job.save();
+            // return res.json({job: job.toJSONFor()});
+        // })
+        // console.log(job);
+        // console.log(req.payload.id);
+        // this.job.jobApplicants.push(req.payload.id);
+        // return job.toJSONFor();
+    // })
+    // console.log(req.payload.id);
+    // return res.json({sdf: "hello"})
+// }
 
 //showall jobs
 module.exports.browseJobs = function (req, res, next) {
@@ -129,27 +157,29 @@ module.exports.browseJobs = function (req, res, next) {
     // });
 };
 
-module.exports.getUserJobs = function(req, res, next){
+module.exports.getUserJobs = function (req, res, next) {
     console.log(req.user.id);
-    JobModel.find({jobPublisher: req.user.id}).then(function(jobs){
+    JobModel.find({ jobPublisher: req.user.id }).then(function (jobs) {
         if (jobs) {
-            console.log("jobs found"+jobs)
-            return res.json({jobs: jobs.map(function(job){
+            console.log("jobs found" + jobs)
+            return res.json({
+                jobs: jobs.map(function (job) {
                     return job.toJSONFor();
-            })})
-        }else{
+                })
+            })
+        } else {
             return res.sendStatus(227);
         }
     })
-    
+
 }
 
-module.exports.getJobPreview = function(req, res, next){
+module.exports.getJobPreview = function (req, res, next) {
     console.log(req.params.jobId);
-    JobModel.findById(req.params.jobId).populate({'path':'jobPublisher'}).then(function(job){
+    JobModel.findById(req.params.jobId).populate({ 'path': 'jobPublisher' }).then(function (job) {
         console.log("---------888888888888888888888");
         console.log(job);
-        return res.json({job: job.toJSONFor() });
+        return res.json({ job: job.toJSONFor() });
     })
 }
 
@@ -184,9 +214,10 @@ module.exports.login = function (req, res, next) {
     }
     // console.log(req.body.user);
     passport.authenticate('local', { session: false }, function (err, user, info) {
-        if (err) { 
+        if (err) {
             console.log(err);
-            return res.json({ err: err }); }
+            return res.json({ err: err });
+        }
         if (user) {
             console.log(user);
             user.token = user.generateJWT;
@@ -249,19 +280,19 @@ module.exports.searchjobs = function (req, res, next) {
     var search = {};
     console.log
     // if (req.query.name != null) {
-    search.jobTitle = { "$regex": req.body.query.jobTitle, "$options":"i" };
+    search.jobTitle = { "$regex": req.body.query.jobTitle, "$options": "i" };
     // }
     // if (req.query.location != null) {
-    search.location = { '$regex': req.body.query.location,  "$options":"i" };
+    search.location = { '$regex': req.body.query.location, "$options": "i" };
     // }
     // console.log(search)
     return Promise.all([
         JobModel.find(search).exec()
     ]).then(function (results) {
-        console.log(results+"dsfsdf");
+        console.log(results + "dsfsdf");
         // console.log(results);
-        return res.json({ jobs: results[0]});
-});
+        return res.json({ jobs: results[0] });
+    });
 }
 
 //show all resumes
@@ -321,9 +352,10 @@ module.exports.addJobForm = function (req, res, next) {
 };
 
 module.exports.addJob = function (req, res, next) {
-    request =  req.body.job
+    request = req.body.job
+    console.log(req.user);
     if (req.user.role === 'employer') {
-        
+
         var job = new JobModel();
         job.jobTitle = request.jobTitle;
         console.log(req.body);
@@ -335,7 +367,8 @@ module.exports.addJob = function (req, res, next) {
         job.applicationMethod = request.applicationMethod;
         job.jobPublisher = req.user;
         job.isFeatured = function () { return req.user.isPremiumMember };
-        job.save().then(function () {
+        job.populate({'path':'jobPublisher'}).save().then(function () {
+            req.user.postedJobs.push(job);
             req.user.updateJobCount();
             return res.json({ job: job.toJSONFor() })
         }).catch(next);
