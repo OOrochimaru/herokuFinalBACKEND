@@ -20,19 +20,19 @@ router.get('/:id/getUser', require('../../controllers/userController').getUser);
 //getting user detail for billing and details 
 router.get('/:username/getUserDetails', require('../../controllers/userController').getUserDetails);
 
-router.get('/:jobId', auth.required, require('../../controllers/userController').applyForJob);
+router.get('/:jobId', auth.required, require('../../controllers/jobController').applyForJob);
 
 //get particular user's jobslist
-router.get('/:id/getUserJobs', auth.required,require('../../controllers/userController').getUserJobs);
+router.get('/:id/getUserJobs', auth.required,require('../../controllers/jobController').getUserJobs);
 
 //getting job preveiw for particular job
-router.get('/:jobId/getJobPreview', require('../../controllers/userController').getJobPreview);
+router.get('/:jobId/getJobPreview', require('../../controllers/jobController').getJobPreview);
 
 //hoem page browse jobs without forms
-router.get('/browsejobs', require('../../controllers/userController').browseJobs);
+router.get('/browsejobs', require('../../controllers/jobController').browseJobs);
 
 //home page having browse jobs options
-router.get('/:id/browsejobs', auth.required, require('../../controllers/userController').browseJobs);
+router.get('/:id/browsejobs', auth.required, require('../../controllers/jobController').browseJobs);
 
 //browse all resumes
 router.get('/:id/browseresumes', auth.required, require('../../controllers/userController').browseResumes);
@@ -42,7 +42,7 @@ router.get('/:id/browseresumes', auth.required, require('../../controllers/userC
 router.post('/:id/searchresumes', auth.required, require('../../controllers/userController').searchResumes);
 
 //search jobs
-router.post('/searchjobs', require('../../controllers/userController').searchjobs);
+router.post('/searchjobs', require('../../controllers/jobController').searchjobs);
 
 //login for both 
 router.post('/login', require('../../controllers/userController').login);
@@ -61,10 +61,10 @@ router.get('/:id/home', auth.required, require('../../controllers/userController
 // router.get('/:id/addJob', auth.required, require('../../controllers/userController').addJobForm);
 
 //adding jobs
-router.post('/:id/addJob', auth.required, require('../../controllers/userController').addJob);
+router.post('/:id/addJob', auth.required, require('../../controllers/jobController').addJob);
 
 //editing job
-router.get('/:id/editjob', auth.required, require('../../controllers/userController').viewEditJob);
+router.get('/:id/editjob', auth.required, require('../../controllers/jobController').viewEditJob);
 
 
 module.exports = router;
