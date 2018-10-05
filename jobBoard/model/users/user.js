@@ -123,10 +123,10 @@ UserSchema.methods.toAuthJSON =function(){
     }
 }
 
-UserSchema.methods.toProfileJSONFor = function(user){
+UserSchema.methods.toProfileJSONFor = function(){
     return {
+        _id: this._id,
         username: this.username,
-        userid: this._id,
         userlocation: this.currentLocation,
         company: this.companyName,
         number: this.number,

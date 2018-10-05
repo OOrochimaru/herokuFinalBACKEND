@@ -6,6 +6,7 @@ var mongoosePaginate = require('mongoose-paginate');
 
 //checking logged in token
 module.exports.user = function (req, res, next) {
+    console.log("user logged in checked"+req.payload.id);
     if (req.payload.id !== null) {
         UserModel.findById({ _id: req.payload.id }).then(function (user) {
             // console.log(user);
@@ -49,9 +50,11 @@ module.exports.getUserDetails = function(req, res, next){
 
 
 module.exports.homepage = function (req, res, next) {
-    JobModel.find({ isFeatured: true }).sort({ 'createdAt': -1 }).limit(4).then(function (jobs) {
+    JobModel.find({ isFeatured: true }).populate({'path':'jobPublisher'}).sort({ 'createdAt': -1 }).limit(4).then(function (jobs) {
+        console.log(jobs)
         return res.json({
             jobs: jobs.map(function (job) {
+                
                 return job.toJSONFor();
             })
         });
@@ -74,6 +77,18 @@ module.exports.checkuser = function (req, res, next) {
             
         })
     }
+}
+
+module.exports.applyForJob = function(req, res, next){
+    
+    console.log(req.params.jobId);
+    JobModel.findById(req.params.jobId).populate({'path':'jobPublisher'})
+    .then(function(job){
+        this.job.jobPublisher.push(req.payload.id);
+        return job.toJSONFor();
+    })
+    // console.log(req.payload.id);
+    return res.json({sdf: "hello"})
 }
 
 //showall jobs
@@ -130,8 +145,9 @@ module.exports.getUserJobs = function(req, res, next){
 }
 
 module.exports.getJobPreview = function(req, res, next){
-    console.log(req.params.id);
-    JobModel.findById(req.params.jobId).then(function(job){
+    console.log(req.params.jobId);
+    JobModel.findById(req.params.jobId).populate({'path':'jobPublisher'}).then(function(job){
+        console.log("---------888888888888888888888");
         console.log(job);
         return res.json({job: job.toJSONFor() });
     })
@@ -231,18 +247,20 @@ module.exports.companyDetails = function (req, res, next) {
 //search job
 module.exports.searchjobs = function (req, res, next) {
     var search = {};
+    console.log
     // if (req.query.name != null) {
     search.jobTitle = { "$regex": req.body.query.jobTitle, "$options":"i" };
     // }
     // if (req.query.location != null) {
     search.location = { '$regex': req.body.query.location,  "$options":"i" };
     // }
-    console.log(search)
+    // console.log(search)
     return Promise.all([
         JobModel.find(search).exec()
     ]).then(function (results) {
-        console.log(results);
-        return res.json({ jobs: results    });
+        console.log(results+"dsfsdf");
+        // console.log(results);
+        return res.json({ jobs: results[0]});
 });
 }
 

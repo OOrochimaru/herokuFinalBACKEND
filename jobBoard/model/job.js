@@ -9,10 +9,11 @@ var JobSchema = new Schema({
     jobTitle: { type: String, required: true },
     location: { type: String },
     jobDescription: {
+        catagory: {type: String},
         description: { type: String },
         jobType: { type: String, },
         experience: { type: String },
-        publishedDated: { type: Date, default: Date.now },
+        publishedDate: { type: Date, default: Date.now },
         deadline: { type: Date },
     },
     isActive: { type: Boolean, default: function () { return (this.deadline - new Date()) > 0 } },
@@ -37,12 +38,12 @@ JobSchema.plugin(mongoosePaginate);
 JobSchema.methods.toJSONFor = function () {
     return {
         //slug: this.slug,
-        jobId: this._id,
+        _id: this._id,
         jobTitle: this.jobTitle,
         jobDescription: this.jobDescription,
-        jobLocation: this.location,
+        location: this.location,
         isActive: this.isActive,
-        jobPublisher: this.jobPublisher,
+        jobPublisher: this.jobPublisher.toProfileJSONFor(),
         isFeatured: this.isFeatured,
     }
 }
