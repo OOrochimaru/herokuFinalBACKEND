@@ -66,5 +66,7 @@ router.post('/:id/addJob', auth.required, require('../../controllers/jobControll
 //editing job
 router.get('/:id/editjob', auth.required, require('../../controllers/jobController').viewEditJob);
 
+router.get('/:jobId/hasUserApplied', auth.required, require('../../controllers/jobController').hasUserApplied);
+
 
 module.exports = router;

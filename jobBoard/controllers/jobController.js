@@ -125,3 +125,13 @@ module.exports.viewEditJob = function (req, res, next) {
             return res.json({ job: job });
         });
 };
+
+//has user already applied for this job
+module.exports.hasUserApplied = function(req, res, next){
+    UserModel.findById(req.payload.id).populate({'path':'appliedJobs'}).then(function(user){
+        user.appliedJobs.forEach(job => {
+            job._id 
+        })
+    })
+    return res.json({sss: req.payload.id+req.params.jobId});
+}
