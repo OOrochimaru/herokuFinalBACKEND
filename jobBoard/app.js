@@ -20,7 +20,12 @@ var indexRouter = require('./routes/index');
 //var usersRouter = require('./routes/users');
 
 var app = express();
-app.use(cors());
+var corsOptions = {
+  origin: '*',
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 
 //config details
 app.use(require('morgan')('dev'));

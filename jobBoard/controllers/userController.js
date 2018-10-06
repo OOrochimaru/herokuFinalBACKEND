@@ -4,6 +4,20 @@ var JobModel = require('../model/job');
 var async = require('async');
 var mongoosePaginate = require('mongoose-paginate');
 
+var IncomingFile = require('formidable').IncomingForm;
+
+
+module.exports.uploadFile = function(req, res, next){
+    var form = new IncomingFile();
+    form.on('file', (field, file) => {
+
+    });
+    form.on('end', () => {
+        res.json();
+    })
+    form.parse(req)
+}
+
 //checking logged in token
 module.exports.user = function (req, res, next) {
     console.log("user logged in checked" + req.payload.id);

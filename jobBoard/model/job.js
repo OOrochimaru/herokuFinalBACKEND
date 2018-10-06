@@ -68,5 +68,4 @@ JobSchema.method.AorPJobsJSON = function(){
     }
 }
 
-
 module.exports = mongoose.model('job', JobSchema);

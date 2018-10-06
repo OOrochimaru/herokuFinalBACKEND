@@ -54,6 +54,19 @@ router.get('/:id/getUserJobs', auth.required, require('../../controllers/jobCont
 router.get('/:jobId', auth.required, require('../../controllers/jobController').applyForJob);
 
 
+//get applicantslist of particular job
+router.get('/:jobId/getApplicantsList', require('../../controllers/jobController').getApplicantsList);
+
+
+router.post('/upload', require('../../controllers/userController').uploadFile);
+
+
+
+
+
+
+
+
 
 //search a resume
 router.post('/:id/searchresumes', auth.required, require('../../controllers/userController').searchResumes);

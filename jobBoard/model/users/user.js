@@ -121,7 +121,7 @@ UserSchema.methods.toProfileJSONFor = function(){
     return {
         _id: this._id,
         username: this.username,
-        userlocation: this.currentLocation,
+        location: this.currentLocation,
         company: this.companyName,
         number: this.number,
         email: this.email,

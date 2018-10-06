@@ -127,6 +127,37 @@ module.exports.applyForJob = function (req, res, next) {
         })
 }
 
+//get applicants for particular job
+module.exports.getApplicantsList = function(req, res, next){
+    JobModel.findById(req.params.jobId)
+    .populate('jobApplicants')
+    .exec(function(err, job){
+        if (job) {
+
+            return res.json({
+                jobApplicants: job.jobApplicants.map((jobApplicant)=>{
+                    return  {
+                        _id: jobApplicant._id,
+                        username: jobApplicant.username,
+                        location: jobApplicant.currentLocation,
+                        company: jobApplicant.companyName,
+                        number: jobApplicant.number,
+                        email: jobApplicant.email,
+                    }
+                })
+            })
+        }
+    })
+    console.log("healelooo get appicants")
+    // return res.json({hello: "hello"});
+}
+
+
+
+
+
+
+
 //showall jobs
 module.exports.browseJobs = function (req, res, next) {
     var page = parseInt(req.query.pageno) | 0;
