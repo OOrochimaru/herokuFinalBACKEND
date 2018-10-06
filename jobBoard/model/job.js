@@ -48,6 +48,25 @@ JobSchema.methods.toJSONFor = function () {
     }
 }
 
+JobSchema.methods.FeaturedJobsJSON = function(){
+    return {
+        _id: this._id,
+        jobTitle: this.jobTitle,
+        location: this.location,
+        jobType: this.jobDescription.jobType,
+        publishedDate: this.jobDescription.publishedDate,
+    }
+}
+
+
+JobSchema.method.AorPJobsJSON = function(){
+    return {
+        publisher: this.publisher,
+        jobApplicants: this.jobApplicants.map(applicants => {
+            return applicants;
+        })
+    }
+}
 
 
 module.exports = mongoose.model('job', JobSchema);

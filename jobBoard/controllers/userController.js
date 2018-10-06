@@ -8,7 +8,10 @@ var mongoosePaginate = require('mongoose-paginate');
 module.exports.user = function (req, res, next) {
     console.log("user logged in checked" + req.payload.id);
     if (req.payload.id !== null) {
-        UserModel.findById({ _id: req.payload.id }).then(function (user) {
+        UserModel.findById({ _id: req.payload.id })
+        .populate({'path':'appliedJobs'})
+        .populate({'path':'postedJobs'})
+        .then(function (user) {
             // console.log(user);
             if (!user) {
                 return res.sendStatus(401);
@@ -37,7 +40,9 @@ module.exports.getUser = function (req, res, next) {
 module.exports.getUserDetails = function (req, res, next) {
     console.log("sdfjks" + req.params.username);
     if (req.params.username !== null) {
-        UserModel.findOne({ username: req.params.username }).then(function (user) {
+        UserModel.findOne({ username: req.params.username })
+        .populate({'path':'appliedJobs'})
+        .then(function (user) {
             if (user) {
                 console.log("******getuser")
                 console.log(user);
@@ -49,18 +54,6 @@ module.exports.getUserDetails = function (req, res, next) {
 
 
 
-module.exports.homepage = function (req, res, next) {
-    JobModel.find({ isFeatured: true }).populate({ 'path': 'jobPublisher' }).sort({ 'createdAt': -1 }).limit(4).then(function (jobs) {
-        console.log(jobs)
-        return res.json({
-            jobs: jobs.map(function (job) {
-
-                return job.toJSONFor();
-            })
-        });
-    });
-    // return res.json({job: "job"});
-};
 
 //checking existing username or email
 module.exports.checkuser = function (req, res, next) {
@@ -115,7 +108,7 @@ module.exports.login = function (req, res, next) {
         }
         if (user) {
             console.log(user);
-            user.token = user.generateJWT;
+            user.token = user.generateJWT();
             return res.json({ user: user.toAuthJSON() });
         } else {
             console.log("password authenticate")
@@ -125,9 +118,11 @@ module.exports.login = function (req, res, next) {
 };
 
 module.exports.loadUser = function (req, res, next, id) {
+    console.log("parma id *************")
     UserModel.findOne({ _id: id }).then(function (user) {
         if (!user) { return res.sendStatus(404); }
         req.user = user;
+        console.log(req.user+"*******************in param id")
         return next();
     }).catch(next);
 };

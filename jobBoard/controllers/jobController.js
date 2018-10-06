@@ -2,10 +2,24 @@ var JobModel = require('../model/job');
 var UserModel = require('../model/users/user');
 
 
+//homepage feature jobs fetching
+module.exports.homepage = function (req, res, next) {
+    JobModel.find({ isFeatured: true })
+        // .populate({ 'path': 'jobPublisher' })
+        .sort({ 'createdAt': -1 })
+        .limit(4)
+        .then(function (jobs) {
+            return res.json({
+                jobs: jobs.map(function (job) {
+                    return job.FeaturedJobsJSON();
+                })
+            });
+        });
+};
+
 //search job
 module.exports.searchjobs = function (req, res, next) {
     var search = {};
-    console.log
     // if (req.query.name != null) {
     search.jobTitle = { "$regex": req.body.query.jobTitle, "$options": "i" };
     // }
@@ -16,10 +30,45 @@ module.exports.searchjobs = function (req, res, next) {
     return Promise.all([
         JobModel.find(search).exec()
     ]).then(function (results) {
-        console.log(results + "dsfsdf");
         // console.log(results);
         return res.json({ jobs: results[0] });
     });
+}
+
+//get Employer jobslist
+module.exports.getEmployerJobs = function (req, res, next) {
+    console.log(req.user);
+    UserModel.findById(req.user.id)
+        .populate('postedJobs')
+        .exec(function (err, user) {
+            if (user) {
+                console.log(user.postedJobs);
+                return res.json({
+
+                    jobs: user.postedJobs
+                })
+            }
+            else {
+                return res.sendStatus(227);
+            }
+        })
+}
+
+//get user applied jobslist
+module.exports.getUserJobs = function(req, res, next){
+    console.log(req.user);
+    UserModel.findById(req.user.id)
+    .populate('appliedJobs')
+    .exec(function(err, user){
+        if (user) {
+            console.log("----------------getuserjobs")
+            
+            console.log(user)
+            return res.json({jobs: user.appliedJobs})
+        }else{
+            return res.sendStatus(227);
+        }
+    })
 }
 
 //adding jobs
@@ -39,7 +88,7 @@ module.exports.addJob = function (req, res, next) {
         job.applicationMethod = request.applicationMethod;
         job.jobPublisher = req.user;
         job.isFeatured = function () { return req.user.isPremiumMember };
-        job.populate({'path':'jobPublisher'}).save().then(function () {
+        job.populate({ 'path': 'jobPublisher' }).save().then(function () {
             req.user.postedJobs.push(job);
             req.user.updateJobCount();
             return res.json({ job: job.toJSONFor() })
@@ -60,24 +109,7 @@ module.exports.getJobPreview = function (req, res, next) {
 }
 
 
-//jobs of particular user
-module.exports.getUserJobs = function (req, res, next) {
-    console.log(req.user.id);
-    JobModel.find({ jobPublisher: req.user.id })
-    .populate({'path':'jobPublisher'}).then(function(jobs) {
-        if (jobs) {
-            console.log("jobs found" + jobs)
-            return res.json({
-                jobs: jobs.map(function (job) {
-                    return job.toJSONFor();
-                })
-            })
-        } else {
-            return res.sendStatus(227);
-        }
-    })
 
-}
 
 //apply for a particular job
 module.exports.applyForJob = function (req, res, next) {
@@ -127,11 +159,11 @@ module.exports.viewEditJob = function (req, res, next) {
 };
 
 //has user already applied for this job
-module.exports.hasUserApplied = function(req, res, next){
-    UserModel.findById(req.payload.id).populate({'path':'appliedJobs'}).then(function(user){
+module.exports.hasUserApplied = function (req, res, next) {
+    UserModel.findById(req.payload.id).populate({ 'path': 'appliedJobs' }).then(function (user) {
         user.appliedJobs.forEach(job => {
-            job._id 
+            job._id
         })
     })
-    return res.json({sss: req.payload.id+req.params.jobId});
+    return res.json({ sss: req.payload.id + req.params.jobId });
 }

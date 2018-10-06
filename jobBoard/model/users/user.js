@@ -10,8 +10,8 @@ var passwordHash = require('password-hash');
 
 var UserSchema = new Schema({
     username: {type:String, required: [true, 'can\'t be blank'], unique: true,
-                    lowercase: true, match:[/^[a-zA-Z0-9]+$/, 'is invalid'] },
-    email: {type: String, required:[true, "can't be blank"], unique:true, match:[/\S+@\S+\.\S+/]},
+                    lowercase: true},
+    email: {type: String, required:[true, "can't be blank"], unique:true},
     password: {type: String, required: true},
     user: {type: String},
     number:{type:Number, required:true},
@@ -97,7 +97,7 @@ UserSchema.methods.updateJobCount = function(){
 };
 
 //generating token
-UserSchema.methods.generatJWT = function(){
+UserSchema.methods.generateJWT = function(){
     var today = new Date();
     var exp = new Date(today);
     exp.setDate(today.getDate() + 60);
@@ -112,14 +112,8 @@ UserSchema.methods.toAuthJSON =function(){
     return {
         _id: this._id,
         username: this.username,
-        userlocation: this.currentLocation,
-        company: this.companyName,
-        number: this.number,
-        email: this.email,
-        appliedJobs: this.appliedJobs,
-        postedJobs: this.postedJobs,
         role: this.role,
-        token: this.generatJWT(),
+        token: this.generateJWT(),
     }
 }
 
@@ -131,7 +125,9 @@ UserSchema.methods.toProfileJSONFor = function(){
         company: this.companyName,
         number: this.number,
         email: this.email,
-        appliedJobs: this.appliedJobs,
+        appliedJobs: this.appliedJobs.map((appliedJob) => {
+            return appliedJob.toJSONFor();
+        }),
         postedJobs: this.postedJobs,
         role: this.role,
     }

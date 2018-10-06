@@ -11,8 +11,6 @@ router.param('id', require('../../controllers/userController').loadUser);
 router.post('/checkuser', require('../../controllers/userController').checkuser);
 
 
-//home page along with search and featured jobs
-router.get('/', require('../../controllers/userController').homepage);
 
 //get particular user for job preview detailing
 router.get('/:id/getUser', require('../../controllers/userController').getUser);
@@ -20,10 +18,7 @@ router.get('/:id/getUser', require('../../controllers/userController').getUser);
 //getting user detail for billing and details 
 router.get('/:username/getUserDetails', require('../../controllers/userController').getUserDetails);
 
-router.get('/:jobId', auth.required, require('../../controllers/jobController').applyForJob);
 
-//get particular user's jobslist
-router.get('/:id/getUserJobs', auth.required,require('../../controllers/jobController').getUserJobs);
 
 //getting job preveiw for particular job
 router.get('/:jobId/getJobPreview', require('../../controllers/jobController').getJobPreview);
@@ -38,11 +33,31 @@ router.get('/:id/browsejobs', auth.required, require('../../controllers/jobContr
 router.get('/:id/browseresumes', auth.required, require('../../controllers/userController').browseResumes);
 
 
-//search a resume
-router.post('/:id/searchresumes', auth.required, require('../../controllers/userController').searchResumes);
+
+//**************************************************************************** */
+
+//homepage featured job fetching 
+router.get('/', require('../../controllers/jobController').homepage);
+
 
 //search jobs
 router.post('/searchjobs', require('../../controllers/jobController').searchjobs);
+
+
+//get Employer jobslist
+router.get('/:id/getEmployerJobs', auth.required, require('../../controllers/jobController').getEmployerJobs);
+
+//get user applied jobslist
+router.get('/:id/getUserJobs', auth.required, require('../../controllers/jobController').getUserJobs);
+
+//apply for a particular job
+router.get('/:jobId', auth.required, require('../../controllers/jobController').applyForJob);
+
+
+
+//search a resume
+router.post('/:id/searchresumes', auth.required, require('../../controllers/userController').searchResumes);
+
 
 //login for both 
 router.post('/login', require('../../controllers/userController').login);
