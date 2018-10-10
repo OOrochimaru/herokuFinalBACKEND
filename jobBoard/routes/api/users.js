@@ -69,6 +69,7 @@ router.get('/:jobId/getShortListedApplicants', require('../../controllers/jobCon
 
 
 
+
 //search a resume
 router.post('/:id/searchresumes', auth.required, require('../../controllers/userController').searchResumes);
 
