@@ -19,6 +19,7 @@ var JobSchema = new Schema({
     isActive: { type: Boolean, default: function () { return (this.deadline - new Date()) > 0 } },
     jobApplicants: [{ type: Schema.Types.ObjectId, ref: 'user' }],
     jobPublisher: { type: Schema.Types.ObjectId, ref: 'user' },
+    shortlisted: [{type: Schema.Types.ObjectId, ref: 'user'}],
     isFeatured: { type: Boolean, default: false },
     views: { type: Number }
 }, { timestamps: true });
@@ -64,6 +65,13 @@ JobSchema.method.AorPJobsJSON = function(){
         publisher: this.publisher,
         jobApplicants: this.jobApplicants.map(applicants => {
             return applicants;
+        })
+    }
+}
+JobSchema.method.shortlisted = function(){
+    return {
+        shortlisted: this.shortlisted.map(shortlisted => {
+            return shortlisted;
         })
     }
 }

@@ -58,9 +58,10 @@ router.get('/:jobId', auth.required, require('../../controllers/jobController').
 router.get('/:jobId/getApplicantsList', require('../../controllers/jobController').getApplicantsList);
 
 
-router.post('/upload', require('../../controllers/userController').uploadFile);
+// router.post('/upload', require('../../controllers/userController').uploadFile);
 
-
+// fetch all the shortlisted candidate of this job
+router.get('/:jobId/getShortListedApplicants', require('../../controllers/jobController').getShortListedApplicants);
 
 
 

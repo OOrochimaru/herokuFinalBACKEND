@@ -152,6 +152,33 @@ module.exports.getApplicantsList = function(req, res, next){
     // return res.json({hello: "hello"});
 }
 
+module.exports.getShortListedApplicants = function(req, res, next){
+    console.log(req.params.jobId);
+    JobModel.findById(req.params.jobId)
+    .populate('shortlisted')
+    .then(function(job){
+        console.log("job",job);
+        count = job.shortlisted.length;
+        console.log(count);
+        // return res.json({"h":'dfd'})
+        if(count > 0){
+        return res.json({shortlisted: job.shortlisted.map((shortlist) => {
+                return {
+                    count: count?count:0,
+                    _id: shortlist._id,
+                    username: shortlist.username,
+                    location: shortlist.currentLocation,
+                    company: shortlist.companyName,
+                    number: shortlist.number,
+                    email: shortlist.email,
+                }
+        })});
+    }else{
+        return res.sendStatus(404);
+    }
+    });
+
+}
 
 
 
