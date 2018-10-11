@@ -40,7 +40,7 @@ module.exports.getEmployerJobs = function (req, res, next) {
     console.log(req.user);
     UserModel.findById(req.user.id)
         .populate('postedJobs')
-        .exec(function (err, user) {
+        .then(function (user) {
             if (user) {
                 console.log(user.postedJobs);
                 return res.json({
@@ -100,10 +100,9 @@ module.exports.addJob = function (req, res, next) {
 
 //info of job to be previewed
 module.exports.getJobPreview = function (req, res, next) {
-    console.log(req.params.jobId);
-    JobModel.findById(req.params.jobId).populate({ 'path': 'jobPublisher' }).then(function (job) {
-        console.log("---------888888888888888888888");
-        console.log(job);
+    JobModel.findById(req.params.jobId)
+    .populate({ 'path': 'jobPublisher' })
+    .then(function (job) {
         return res.json({ job: job.toJSONFor() });
     })
 }
@@ -114,16 +113,26 @@ module.exports.getJobPreview = function (req, res, next) {
 //apply for a particular job
 module.exports.applyForJob = function (req, res, next) {
 
-    console.log(req.params.jobId);
-    JobModel.findById(req.params.jobId).populate({ 'path': 'jobPublisher' })
+    // console.log(req.params.jobId);
+    JobModel.findById(req.params.jobId)
+    .populate({ 'path': 'jobPublisher' })
         .then(function (job) {
             UserModel.findById(req.payload.id).then(function (user) {
-                job.jobApplicants.push(user);
-                job.save();
-                user.appliedJobs.push(job);
-                user.save();
-                return res.json({ job: job.toJSONFor() })
-            })
+                // console.log("jobapplicant array", job.jobApplicants)
+                // console.log("user id ", user.id)
+                // console.log("job ", job)
+                // console.log(job.jobApplicants.indexOf(user.id) > -1);
+                if (job.jobApplicants.indexOf(user.id) <= -1 
+                || job.jobApplicants.length === 0) {
+                    job.jobApplicants.push(user);
+                    job.save();
+                    user.appliedJobs.push(job);
+                    user.save();
+                    return res.json({ job: job.toJSONFor() })
+                }else{
+                    return res.json({status: 201, job: "Already Applied"});
+                }
+            });
         })
 }
 
@@ -155,7 +164,7 @@ module.exports.getApplicantsList = function(req, res, next){
 module.exports.getShortListedApplicants = function(req, res, next){
     JobModel.findById(req.params.jobId)
     .populate('shortlisted')
-    .exec(function(job){
+    .then(function(job){
         count = job.shortlisted.length;
         // return res.json({"h":'dfd'})
         if(count > 0){
@@ -191,7 +200,7 @@ module.exports.shortListACandidate = function(req, res, next){
                 job.save();
                 return res.sendStatus({status: 200, data:"Added in the list"});
             }else{
-                return res.json({data: "Already in the array"})
+                return res.json({status: 201, data: "Already in the array"})
             }
         });
     });
@@ -215,7 +224,6 @@ module.exports.browseJobs = function (req, res, next) {
                 message: 'Data Not Found'
             });
         }
-        console.log('no found');
         return res.json({
             jobs: jobs.map(function (job) {
                 return job.toJSONFor();

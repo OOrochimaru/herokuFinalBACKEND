@@ -44,7 +44,7 @@ JobSchema.methods.toJSONFor = function () {
         jobDescription: this.jobDescription,
         location: this.location,
         isActive: this.isActive,
-        jobPublisher: this.jobPublisher.toProfileJSONFor(),
+        jobPublisher: this.jobPublisher,
         isFeatured: this.isFeatured,
     }
 }
