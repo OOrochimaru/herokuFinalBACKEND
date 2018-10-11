@@ -63,6 +63,9 @@ router.get('/:jobId/getApplicantsList', require('../../controllers/jobController
 // fetch all the shortlisted candidate of this job
 router.get('/:jobId/getShortListedApplicants', require('../../controllers/jobController').getShortListedApplicants);
 
+//shortListACandidate 
+router.post('/:jobId/shortListACandidate', require('../../controllers/jobController').shortListACandidate);
+
 
 
 

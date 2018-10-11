@@ -153,13 +153,10 @@ module.exports.getApplicantsList = function(req, res, next){
 }
 
 module.exports.getShortListedApplicants = function(req, res, next){
-    console.log(req.params.jobId);
     JobModel.findById(req.params.jobId)
     .populate('shortlisted')
-    .then(function(job){
-        console.log("job",job);
+    .exec(function(job){
         count = job.shortlisted.length;
-        console.log(count);
         // return res.json({"h":'dfd'})
         if(count > 0){
         return res.json({shortlisted: job.shortlisted.map((shortlist) => {
@@ -178,6 +175,26 @@ module.exports.getShortListedApplicants = function(req, res, next){
     }
     });
 
+}
+
+module.exports.shortListACandidate = function(req, res, next){
+    id = req.params.jobId; 
+    JobModel.findById(id)
+    // .populate({'path': 'shortlisted'})
+    // .populate('shortlisted')
+    .then(function(job){
+        UserModel.findOne({'username': req.body.applicant})
+        // .populate("appliedJobs")
+        .then(function(user){
+            if (job.shortlisted.indexOf(user.id) <= -1 || job.shortlisted.length === 0 ) {
+                job.shortlisted.push(user);
+                job.save();
+                return res.sendStatus({status: 200, data:"Added in the list"});
+            }else{
+                return res.json({data: "Already in the array"})
+            }
+        });
+    });
 }
 
 
