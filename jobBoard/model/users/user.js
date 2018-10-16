@@ -16,7 +16,7 @@ var UserSchema = new Schema({
     user: {type: String},
     number:{type:Number, required:true},
     currentLocation: {type: String},
-    companyName: {type: String, },
+    companyName: {type: String },
         //required: function(){return this.role === 'employer'}},
     companyDescription: {type: String},
         // required: function(){return this.role === 'employer'}},
@@ -130,6 +130,17 @@ UserSchema.methods.toProfileJSONFor = function(){
         }),
         postedJobs: this.postedJobs,
         role: this.role,
+    }
+}
+
+UserSchema.methods.toJobPreviewJSON = function(){
+    return {
+        _id: this._id,
+        username: this.username,
+        location: this.currentLocation,
+        company: this.companyName,
+        number: this.number,
+        email: this.email,
     }
 }
 

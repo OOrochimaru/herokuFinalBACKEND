@@ -41,10 +41,12 @@ JobSchema.methods.toJSONFor = function () {
         //slug: this.slug,
         _id: this._id,
         jobTitle: this.jobTitle,
-        jobDescription: this.jobDescription,
+        description: this.jobDescription.description,
+        qualification: this.jobDescription.qualification,
+        // jobDescription: this.jobDescription,
         location: this.location,
         isActive: this.isActive,
-        jobPublisher: this.jobPublisher,
+        jobPublisher: this.jobPublisher.toJobPreviewJSON(),
         isFeatured: this.isFeatured,
     }
 }
