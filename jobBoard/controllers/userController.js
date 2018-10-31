@@ -3,11 +3,14 @@ var UserModel = require('../model/users/user');
 var JobModel = require('../model/job');
 var async = require('async');
 var mongoosePaginate = require('mongoose-paginate');
+var randomString = require('randomstring');
+var emailConfig = require('../config/email');
+var nodemailer = require('nodemailer');
 
 var IncomingFile = require('formidable').IncomingForm;
 
 
-module.exports.uploadFile = function(req, res, next){
+module.exports.uploadFile = function (req, res, next) {
     var form = new IncomingFile();
     form.on('file', (field, file) => {
 
@@ -23,17 +26,17 @@ module.exports.user = function (req, res, next) {
     console.log("user logged in checked" + req.payload.id);
     if (req.payload.id !== null) {
         UserModel.findById({ _id: req.payload.id })
-        .populate({'path':'appliedJobs'})
-        .populate({'path':'postedJobs'})
-        .then(function (user) {
-            // console.log(user);
-            if (!user) {
-                return res.sendStatus(401);
-            }
-            if (user) {
-                return res.json({ user: user.toAuthJSON() })
-            }
-        })
+            .populate({ 'path': 'appliedJobs' })
+            .populate({ 'path': 'postedJobs' })
+            .then(function (user) {
+                // console.log(user);
+                if (!user) {
+                    return res.sendStatus(401);
+                }
+                if (user) {
+                    return res.json({ user: user.toAuthJSON() })
+                }
+            })
     }
 }
 
@@ -55,14 +58,14 @@ module.exports.getUserDetails = function (req, res, next) {
     console.log("sdfjks" + req.params.username);
     if (req.params.username !== null) {
         UserModel.findOne({ username: req.params.username })
-        .populate({'path':'appliedJobs'})
-        .then(function (user) {
-            if (user) {
-                console.log("******getuser")
-                console.log(user);
-                return res.json({ user: user.toProfileJSONFor() });
-            }
-        })
+            .populate({ 'path': 'appliedJobs' })
+            .then(function (user) {
+                if (user) {
+                    console.log("******getuser")
+                    console.log(user);
+                    return res.json({ user: user.toProfileJSONFor() });
+                }
+            })
     }
 }
 
@@ -78,7 +81,8 @@ module.exports.checkuser = function (req, res, next) {
             console.log(user)
             if (!user) {
                 console.log("user not found")
-                return res.sendStatus(404);
+                // return res.sendStatus(404);
+                next(new Error("user not found"));
             }
             return res.json({ user: user });
 
@@ -88,7 +92,7 @@ module.exports.checkuser = function (req, res, next) {
 
 module.exports.register = function (req, res, next) {
     var user = new UserModel();
-    console.log("register reached")
+    // console.log(req.body)
     // console.log("hello");
 
     user.username = req.body.user.fullname;
@@ -99,11 +103,52 @@ module.exports.register = function (req, res, next) {
     user.role = req.body.user.userType;
     user.gender = req.body.user.gender;
 
-    user.save().then(function () {
-        // console.log("*******")
-        return res.json({ user: user.toAuthJSON() });
-    }).catch(next);
+    UserModel.findOne({
+        email: {
+            "$regex": user.email, "$options": "i"
+        }
+    }).exec(function (err, existingUser) {
+        console.log(existingUser + "" + err);
+        if (existingUser !== null) {
+            console.log(existingUser !== null);
+            return res.json({ status: 203, message: 'Email Already exists in the database' });
+        } else {
+            var verificationToken = randomString.generate(12);
+            user.verificationToken = verificationToken;
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                host: 'smtp.gmail.com',
+                auth: {
+                    user: emailConfig.admin.email,
+                    pass: emailConfig.admin.password
+                }
+            });
+            hosted = "localhost:4200"
+            verificationlink = "http://" + hosted + "/verifyemail" + verificationToken;
+            const mailOptions = {
+                from: emailConfig.admin.email,
+                to: user.email,
+                subject: 'Please confirm account',
+                text: 'Hello,<br> Please Click on the link to verify your email.<br><a href=' + verificationlink + '>Click here to verify</a><br>This link is expire after a single click',
+            };
+            transporter.sendMail(mailOptions, function (err, info) {
+                console.log("errrirr sus gerer ", err + "" + info);
+                console.log(info);
+                if (err) {
+                }
+                if (info) {
+                    //mail send
+                    user.save().then(function (result) {
+                        console.log("this is saved result", result);
+                        // if (result) {
+                        return res.json({status: 200, user: result.toAuthJSON() });
+                        // }
+                    });
+                }
+            });
 
+        }
+    });
 }
 
 
@@ -136,7 +181,7 @@ module.exports.loadUser = function (req, res, next, id) {
     UserModel.findOne({ _id: id }).then(function (user) {
         if (!user) { return res.sendStatus(404); }
         req.user = user;
-        console.log(req.user+"*******************in param id")
+        console.log(req.user + "*******************in param id")
         return next();
     }).catch(next);
 };

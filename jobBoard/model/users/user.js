@@ -13,6 +13,7 @@ var UserSchema = new Schema({
                     lowercase: true},
     email: {type: String, required:[true, "can't be blank"], unique:true},
     password: {type: String, required: true},
+    verificationToken : {type: String, unique: true},
     user: {type: String},
     number:{type:Number, required:true},
     currentLocation: {type: String},

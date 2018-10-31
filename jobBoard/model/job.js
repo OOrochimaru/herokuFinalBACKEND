@@ -25,7 +25,7 @@ var JobSchema = new Schema({
 }, { timestamps: true });
 
 //JobSchema.plugin(uniqueValidator, {message:'is already taken'});
-JobSchema.plugin(mongoosePaginate);
+// JobSchema.plugin(mongoosePaginate);
 // JobSchema.pre('validate', function(next){
 //     if (!this.slug) {
 //         this.slugify();
