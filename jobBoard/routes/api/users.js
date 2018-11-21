@@ -39,6 +39,9 @@ router.get('/:id/browseresumes', auth.required, require('../../controllers/userC
 //homepage featured job fetching 
 router.get('/', require('../../controllers/jobController').homepage);
 
+//getting paginate jobs
+router.post('/paginateJobs', require('../../controllers/jobController').paginateJobs);
+
 
 //search jobs
 router.post('/searchjobs', require('../../controllers/jobController').searchjobs);

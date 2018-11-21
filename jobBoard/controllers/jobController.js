@@ -4,18 +4,43 @@ var UserModel = require('../model/users/user');
 
 //homepage feature jobs fetching
 module.exports.homepage = function (req, res, next) {
-    JobModel.find({ isFeatured: true })
+    var totalJobs;
+    JobModel.find({isFeatured: true}).count().then(function(count){
+        totalJobs = count;
+        JobModel.find({ isFeatured: true })
         // .populate({ 'path': 'jobPublisher' })
         .sort({ 'createdAt': -1 })
-        .limit(4)
+        .limit(5)
         .then(function (jobs) {
             return res.json({
                 jobs: jobs.map(function (job) {
                     return job.FeaturedJobsJSON();
-                })
+                }), totalJobs: totalJobs
             });
         });
+    });
+
+
 };
+
+//paginating jobs
+module.exports.paginateJobs = function(req, res, next){
+    var paginatedata = req.body;
+    console.log(paginatedata);
+    var totalJobs;
+    JobModel.find({isFeatured: true}).count().then(function(count){
+        totalJobs = count;
+        console.log(totalJobs)
+        JobModel.find({isFeatured: true})
+    .sort({createdAt: -1})
+    .skip(paginatedata.first)
+    .limit(paginatedata.rows).then(function(result){
+        console.log(result);
+        return res.json({jobs: result, totalJobs: totalJobs});
+    })
+    });
+    
+}
 
 //search job
 module.exports.searchjobs = function (req, res, next) {
